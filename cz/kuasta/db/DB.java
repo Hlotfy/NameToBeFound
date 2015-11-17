@@ -16,8 +16,6 @@ import cz.kuasta.items.Item.Quality;
 import cz.kuasta.items.crafting.Machine;
 import cz.kuasta.items.crafting.Recipe;
 import cz.kuasta.items.crafting.Tool;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 
 
 /**
@@ -322,31 +320,37 @@ public class DB{
 				result = Slot.SHOULDERS;
 				break;
 			case 3:
-				result = Slot.BODY;
+				result = Slot.CHEST;
 				break;
 			case 4:
-				result = Slot.LEGS;
+				result = Slot.WRIST;
 				break;
 			case 5:
-				result = Slot.BOOTS;
-				break;
-			case 6:
 				result = Slot.HANDS;
 				break;
-			case 7:
+			case 6:
 				result = Slot.BELT;
 				break;
+			case 7:
+				result = Slot.LEGS;
+				break;
 			case 8:
-				result = Slot.MAINHAND;
+				result = Slot.BOOTS;
 				break;
 			case 9:
-				result = Slot.OFFHAND;
+				result = Slot.MAINHAND;
 				break;
 			case 10:
-				result = Slot.ONEHAND;
+				result = Slot.OFFHAND;
 				break;
 			case 11:
+				result = Slot.ONEHAND;
+				break;
+			/*case 12:
 				result = Slot.TWOHAND;
+				break;*/
+			case 13:
+				result = Slot.RING;
 				break;
 		}
 		

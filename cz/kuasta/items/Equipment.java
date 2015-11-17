@@ -23,7 +23,7 @@ public class Equipment extends Item {
 	}
 	
 	public enum Slot{
-		HEAD(1), SHOULDERS(2), BODY(3), LEGS(4), BOOTS(5), HANDS(6), BELT(7), MAINHAND(8), OFFHAND(9), ONEHAND(10), TWOHAND(11);
+		HEAD(1), SHOULDERS(2), CHEST(3), WRIST(4), HANDS(5), BELT(6), LEGS(7), BOOTS(8), MAINHAND(9), OFFHAND(10), ONEHAND(11), /*TWOHAND(12),*/ RING(13);
 		
 		int value;
 		private Slot(int i){

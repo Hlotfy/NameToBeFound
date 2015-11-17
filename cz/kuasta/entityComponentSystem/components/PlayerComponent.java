@@ -1,7 +1,11 @@
 package cz.kuasta.entityComponentSystem.components;
 
-import cz.kuasta.items.Equip;
+import java.util.HashMap;
+
+import cz.kuasta.items.Equipment;
+import cz.kuasta.items.Equipment.Slot;
 import cz.kuasta.items.Stats;
+import cz.kuasta.items.inventory.ListInventory;
 
 public class PlayerComponent extends CharacterComponent{
 	
@@ -10,11 +14,17 @@ public class PlayerComponent extends CharacterComponent{
 	public PlayerComponent(){
 		super();
 	}
-	public PlayerComponent(String name, int hp, int level, String title, Stats stats, Equip equip){
-		super(name, hp, level, stats, equip);
+	public PlayerComponent(String title, String name, int hp, int level, Stats stats, ListInventory inventory){
+		super(name, hp, level, stats, inventory);
 		
 		this.title = title;
 	}
+	public PlayerComponent(String title, String name, int hp, int level, Stats stats, ListInventory inventory, HashMap<Slot, Equipment> equip){
+		super(name, hp, level, stats, inventory, equip);
+		
+		this.title = title;
+	}
+	
 	
 	public String getTitle() {
 		return title;
@@ -22,4 +32,5 @@ public class PlayerComponent extends CharacterComponent{
 	public void setTitle(String title) {
 		this.title = title;
 	}
+	
 }

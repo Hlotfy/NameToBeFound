@@ -10,8 +10,16 @@ package cz.kuasta.items;
 */
 public class Item {
 	
+	@SuppressWarnings("null")
 	public Item(){
-		
+		this.id = (Integer) null;
+		this.name = null;
+		this.flavorText = null;
+		this.quality = null;
+		this.amount = (Integer) null;
+		this.maxAmount = (Integer) null;
+		this.buyPrice = (Integer) null;
+		this.sellPrice = (Integer) null;
 	}
 	public Item(int id, String name, String flavorText, Quality quality, int amount, int maxAmount, int buyPrice, int sellPrice){
 		this.id = id;

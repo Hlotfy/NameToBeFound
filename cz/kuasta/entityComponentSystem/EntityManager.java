@@ -15,8 +15,10 @@ import java.util.HashMap;
 @SuppressWarnings("rawtypes")
 public class EntityManager {
 	
+	public static Entity player;
+	
 	//POMOCNE? NA HOVNO
-	private int freeId = 0;
+	private int freeId = 1;
 	
 	public static double
 	STRENGTH_RATIO, INTELECT_RATIO, AGILITY_RATIO, STAMINA_RATIO, LUCK_RATIO,
@@ -28,6 +30,8 @@ public class EntityManager {
 	private static ArrayList<Integer> updateNot = new ArrayList<Integer>();
 
 	public EntityManager(){
+		int id = newEntity();
+		player = getEntity(id);
 		
 		STRENGTH_RATIO = 1.5;
 		INTELECT_RATIO = 1.5;
