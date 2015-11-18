@@ -1,14 +1,14 @@
 package cz.kuasta.binaryTree;
 
-import java.util.ArrayList;
+import java.util.Stack;
 
 public class Node<T> {
 	public int id;
-	public ArrayList<T> value;
+	public Stack<T> value;
 	
 	protected Node<T> left, right;
 	
-	public Node(int id, ArrayList<T> value){
+	public Node(int id, Stack<T> value){
 		this.id = id;
 		this.value = value;
 	}

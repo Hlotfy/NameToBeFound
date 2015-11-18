@@ -1,6 +1,7 @@
 package cz.kuasta.binaryTree;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 import cz.kuasta.items.Item;
 
@@ -47,11 +48,11 @@ public class BinaryTree<T extends Item> {
 	 * @param id - id value to look for
 	 * @return result - node value
 	*/
-	public ArrayList<T> getValue(int id){
+	public Stack<T> getValue(int id){
 		return lookUp(root, id).value;	
 	}
 	/***/
-	public void setValue(int id, ArrayList<T> value){
+	public void setValue(int id, Stack<T> value){
 		lookUp(root, id).value = value;
 	}
 	/**
@@ -60,8 +61,8 @@ public class BinaryTree<T extends Item> {
 	 * @param arrayId - arrayId of the instance
 	 * @return result - instance of node value 
 	*/
-	public T getInstance(int id, int arrayId){
-		return lookUp(root, id).value.get(arrayId);
+	public T getInstance(int id, int stackId){
+		return lookUp(root, id).value.get(stackId);
 	}
 	/**
 	 * Inserts a new Node<T> into the tree.
@@ -79,12 +80,14 @@ public class BinaryTree<T extends Item> {
 	*/
 	public void addInstance(T instance){
 		if(contains(instance.id) == false){
-			ArrayList<T> tmp = new ArrayList<T>();
+			Stack<T> tmp = new Stack<T>();
 			tmp.add(instance);
 			
 			Node<T> node = new Node<T>(instance.id, tmp);
 			
 			addNode(node);
+		}else{
+			lookUp(root, instance.id).value.push(instance);
 		}
 	}
 	/**
@@ -161,13 +164,13 @@ public class BinaryTree<T extends Item> {
 		}	
 	}
 	
-	public void inOrder(Node<T> node) {
+	/*public void inOrder(Node<T> node) {
 		if (node != null) {
 			inOrder(node.getLeft());
 			System.out.println(node.value);
 			inOrder(node.getRight());
 		}
-	}
+	}*/
 	
 	public int size() {
 		return nodes;

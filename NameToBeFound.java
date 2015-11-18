@@ -23,7 +23,6 @@ public class NameToBeFound {
 		entityManager = new EntityManager();
 		
 		
-		Item item = new Equipment(1, "Cap", "Ordinary cap", Quality.COMMON, 5, 2, Slot.HEAD, 10, 10, new Stats(1,1,1,1, 0, 0, 0, 0, 0));
 		
 		int id = 0;
 		ArrayList<Component> comps;
@@ -35,15 +34,22 @@ public class NameToBeFound {
 			
 		comps.add(new PlayerComponent(
 			"", "Kuasta", 100, 1,
-			new Stats(5,5,5,5,5,0,0,0,0),
+			new Stats(5,5,5,5,0,0,0,0,0),
 			new ListInventory())
 		);
 		getEntityManager().addComponents(id, comps);
 				
 		getEntityManager();
+		Item item = new Equipment(1, "Cap", "Ordinary cap", Quality.COMMON, 5, 2, Slot.HEAD, 10, 10, new Stats(1,1,1,1,0,0,0,0,0));
 		((PlayerComponent) EntityManager.getComponents().get(EntityManager.getEntity(id)).get(PlayerComponent.class)).getInventory().addItem(item);
 		
-		((PlayerComponent) EntityManager.getComponents().get(EntityManager.getEntity(id)).get(PlayerComponent.class)).equip((Equipment) item);
+		item = new Equipment(1, "Cap", "Ordinary cap", Quality.COMMON, 5, 2, Slot.HEAD, 10, 10, new Stats(1,1,1,1,0,0,0,0,0));
+		((PlayerComponent) EntityManager.getComponents().get(EntityManager.getEntity(id)).get(PlayerComponent.class)).getInventory().addItem(item);
+		
+		
+		/*((PlayerComponent) EntityManager.getComponents().get(EntityManager.getEntity(id)).get(PlayerComponent.class)).equip(
+			(Equipment) ((PlayerComponent) EntityManager.getComponents().get(EntityManager.getEntity(id)).get(PlayerComponent.class)).getInventory().items.getValue(1).pop()
+		);*/
 		
 		
 		((PlayerComponent) EntityManager.getComponents().get(EntityManager.getEntity(id)).get(PlayerComponent.class)).printEquip();

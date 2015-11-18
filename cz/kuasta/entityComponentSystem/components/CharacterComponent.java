@@ -16,6 +16,7 @@ public class CharacterComponent extends Component{
 	private String name;
 	private int hp;
 	private int level;
+	private Stats baseStats;
 	private Stats stats;
 	private HashMap<Slot, Equipment> equip;
 	private ListInventory inventory;
@@ -25,7 +26,7 @@ public class CharacterComponent extends Component{
 		this.name = null;
 		this.hp = (Integer) null;
 		this.level = (Integer) null;
-		this.stats = null;
+		this.baseStats = null;
 		this.equip = new HashMap<Slot, Equipment>();
 		this.inventory = null;
 		
@@ -40,11 +41,11 @@ public class CharacterComponent extends Component{
 		equip.put(Slot.OFFHAND, null);
 		equip.put(Slot.RING, null);
 	}
-	public CharacterComponent(String name, int hp, int level, Stats stats, ListInventory inventory){
+	public CharacterComponent(String name, int hp, int level, Stats baseStats, ListInventory inventory){
 		this.name = name;
 		this.hp = hp;
 		this.level = level;
-		this.stats = stats;
+		this.baseStats = baseStats;
 		this.inventory = inventory;
 		this.equip = new HashMap<Slot, Equipment>();
 		
@@ -59,11 +60,11 @@ public class CharacterComponent extends Component{
 		equip.put(Slot.OFFHAND, null);
 		equip.put(Slot.RING, null);
 	}
-	public CharacterComponent(String name, int hp, int level, Stats stats, ListInventory inventory, HashMap<Slot, Equipment> equip){
+	public CharacterComponent(String name, int hp, int level, Stats baseStats, ListInventory inventory, HashMap<Slot, Equipment> equip){
 		this.name = name;
 		this.hp = hp;
 		this.level = level;
-		this.stats = stats;
+		this.baseStats = baseStats;
 		this.inventory = inventory;
 		this.equip = equip;
 	}
@@ -78,11 +79,15 @@ public class CharacterComponent extends Component{
 				0, 0, 0, 0
 			);
 		
-		getEquipmentStats().add(result);
+		if(baseStats != null){
+			result.add(this.baseStats);
+		}
 		
-		result.atkPower += result.strength / EntityManager.ATK_POWER_DIVIDE_RATIO;
-		result.dodge += result.agility / EntityManager.DODGE_DIVIDE_RATIO;
-		result.hit += result.strength / EntityManager.HIT_CHANCE_DIVIDE_RATIO_STRENGTH + result.agility / EntityManager.HIT_CHANCE_DIVIDE_RATIO_AGILITY;
+		result.add(getEquipmentStats());
+		
+		result.atkPower = (int) (result.strength * EntityManager.ATK_POWER_DIVIDE_RATIO);
+		result.dodge = (int) (result.agility * EntityManager.DODGE_DIVIDE_RATIO);
+		result.hit = (int) (result.strength * EntityManager.HIT_CHANCE_DIVIDE_RATIO_STRENGTH + result.agility * EntityManager.HIT_CHANCE_DIVIDE_RATIO_AGILITY);
 		
 		this.stats = result;
 	}
@@ -115,7 +120,7 @@ public class CharacterComponent extends Component{
 					break;*/
 			}
 		}
-		inventory.removeItem(new cz.kuasta.items.crafting.Slot(item.id, 1));
+		//inventory.removeItem(new cz.kuasta.items.crafting.Slot(item.id, 1));
 		statsChange();
 	}
 	private void unEquip(Slot slot){

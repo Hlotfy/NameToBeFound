@@ -32,14 +32,14 @@ public class Stats{
 	}
 	
 	public void add(Stats base){
-		base.strength += this.strength;
-		base.intelect += this.intelect;
-		base.agility += this.agility;
-		base.stamina += this.stamina;
-		base.atkPower += this.atkPower;
-		base.dodge += this.dodge;
-		base.hit += this.hit;
-		base.critChance += this.critChance;
+		this.strength += base.strength;
+		this.intelect += base.intelect;
+		this.agility += base.agility;
+		this.stamina += base.stamina;
+		this.atkPower += base.atkPower;
+		this.dodge += base.dodge;
+		this.hit += base.hit;
+		this.critChance += base.critChance;
 	}
 	
 	public int strength, intelect, agility, stamina, luck, atkPower;
