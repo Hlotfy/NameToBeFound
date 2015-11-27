@@ -13,6 +13,10 @@ public class KryoUtil {
     public static final int TCP_PORT = 55223;
     public static final int UDP_PORT = 55224;
     public static final String SERVER_IP = "127.0.0.1";
+    
+    public enum RegistrationState{
+		NAME_TAKEN, EMAIL_TAKEN, PATTERN_WRONG, AVAILABLE;
+	}
  
     /**Registers the communication classes to the server.*/
     public static void registerServerClasses(Server server) {
@@ -32,11 +36,13 @@ public class KryoUtil {
 		
     	//network requests
     	kryo.register(LoginRequest.class);
-    	kryo.register(DBRequest.class);
+    	kryo.register(RegistrationRequest.class);
+    	kryo.register(ClientShutdown.class);
  
         //network responses
     	kryo.register(LoginResponse.class);
-    	kryo.register(DBResponse.class);
+    	kryo.register(RegistrationResponse.class);
+    	kryo.register(ErrorMessage.class);
 		
     }
 }

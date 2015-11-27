@@ -3,7 +3,6 @@ package cz.kuasta.items.crafting;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import cz.kuasta.db.DB;
 import cz.kuasta.items.Item;
 
 /**Basic machine class.<p>
@@ -12,10 +11,10 @@ import cz.kuasta.items.Item;
 */
 public abstract class Machine {
 	
-	private DB db;
 	
-	public Machine(DB db){
-		this.db = db;
+	
+	public Machine(){
+		
 	}
 	
 	
@@ -65,7 +64,7 @@ public abstract class Machine {
 			}
 		}
 		
-		if(craftable){
+		/*if(craftable){
 			for(Slot s : recipe.getProducts()){
 				Item tmp = db.getItem(s.id, 0);
 				int amount = s.amount * finalRepeats;
@@ -89,7 +88,7 @@ public abstract class Machine {
 					result.add(tmp);
 				}
 			}
-		}
+		}*/
 		
 		return result;
 	}	

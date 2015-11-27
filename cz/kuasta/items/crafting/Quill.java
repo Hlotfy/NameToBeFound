@@ -1,7 +1,5 @@
 package cz.kuasta.items.crafting;
 
-import cz.kuasta.items.Item.Quality;
-
 /**
  * Basic quill tool class.<br>
  * Other items, that are to have quill properties, and are intended<p>

@@ -14,17 +14,16 @@ public class PlayerComponent extends CharacterComponent{
 	public PlayerComponent(){
 		super();
 	}
-	public PlayerComponent(String title, String name, int hp, int level, Stats stats, ListInventory inventory){
-		super(name, hp, level, stats, inventory);
+	public PlayerComponent(int charId, String title, String name, int level, Stats stats, ListInventory inventory){
+		super(charId, name, level, stats, inventory);
 		
 		this.title = title;
 	}
-	public PlayerComponent(String title, String name, int hp, int level, Stats stats, ListInventory inventory, HashMap<Slot, Equipment> equip){
-		super(name, hp, level, stats, inventory, equip);
+	public PlayerComponent(int charId, String title, String name, int level, cz.kuasta.items.Stats stats, ListInventory inventory, HashMap<Slot, Equipment> equip){
+		super(charId, name, level, stats, inventory, equip);
 		
 		this.title = title;
 	}
-	
 	
 	public String getTitle() {
 		return title;

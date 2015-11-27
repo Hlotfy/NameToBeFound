@@ -3,7 +3,6 @@ package cz.kuasta.items.inventory;
 import java.util.ArrayList;
 
 import cz.kuasta.items.Item;
-import cz.kuasta.items.crafting.Slot;
 
 /**
  * Iventory derivation class.

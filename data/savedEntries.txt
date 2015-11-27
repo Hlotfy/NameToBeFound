@@ -1,0 +1,6 @@
+Users
+---------------------------------------------------------------------------------------------------------
+| login = Kuasta password = md18nmjchdnss email = vostal.martin@gmail.com acces Level = 1 charId = 0
+| login = Ceranos password = md18nmjchdnss email = vostal.nartim@gmail.com acces Level = 1 charId = 0
+| login = Fadashaf password = md18nmjchdnss email = Kokot.zjebany@fucku.cz acces Level = 1 charId = 0
+---------------------------------------------------------------------------------------------------------

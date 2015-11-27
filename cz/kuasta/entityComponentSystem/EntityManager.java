@@ -3,6 +3,9 @@ package cz.kuasta.entityComponentSystem;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import cz.kuasta.NameToBeFoundServer.NameToBeFoundServer;
+import cz.kuasta.NameToBeFoundServer.NameToBeFoundServer.ServerRates;
+
 /*
  * 
  **/
@@ -15,11 +18,6 @@ import java.util.HashMap;
 @SuppressWarnings("rawtypes")
 public class EntityManager {
 	
-	public static Entity player;
-	
-	//POMOCNE? NA HOVNO
-	private int freeId = 1;
-	
 	public static double
 	STRENGTH_RATIO, INTELECT_RATIO, AGILITY_RATIO, STAMINA_RATIO, LUCK_RATIO,
 	ATK_POWER_DIVIDE_RATIO, DODGE_DIVIDE_RATIO, HIT_CHANCE_DIVIDE_RATIO_STRENGTH, HIT_CHANCE_DIVIDE_RATIO_AGILITY;
@@ -29,27 +27,25 @@ public class EntityManager {
 	private static ArrayList<Entity> entities = new ArrayList<Entity>();
 	private static ArrayList<Integer> updateNot = new ArrayList<Integer>();
 
-	public EntityManager(){
-		int id = newEntity();
-		player = getEntity(id);
+	public EntityManager(){		
+		NameToBeFoundServer.getServerRates();
+		STRENGTH_RATIO = ServerRates.STRENGTH_RATIO;
+		INTELECT_RATIO = ServerRates.INTELECT_RATIO;
+		AGILITY_RATIO = ServerRates.AGILITY_RATIO;
+		STAMINA_RATIO = ServerRates.STAMINA_RATIO;
+		LUCK_RATIO = ServerRates.LUCK_RATIO;
 		
-		STRENGTH_RATIO = 1.5;
-		INTELECT_RATIO = 1.5;
-		AGILITY_RATIO = 1.5;
-		STAMINA_RATIO = 1.5;
-		LUCK_RATIO = 1.5;
-		
-		ATK_POWER_DIVIDE_RATIO = 0.1;
-		DODGE_DIVIDE_RATIO = 0.1;
-		HIT_CHANCE_DIVIDE_RATIO_STRENGTH = 0.05;
-		HIT_CHANCE_DIVIDE_RATIO_AGILITY = 0.05;
+		ATK_POWER_DIVIDE_RATIO = ServerRates.ATK_POWER_DIVIDE_RATIO;
+		DODGE_DIVIDE_RATIO = ServerRates.DODGE_DIVIDE_RATIO;
+		HIT_CHANCE_DIVIDE_RATIO_STRENGTH = ServerRates.HIT_CHANCE_DIVIDE_RATIO_STRENGTH;
+		HIT_CHANCE_DIVIDE_RATIO_AGILITY =ServerRates.HIT_CHANCE_DIVIDE_RATIO_AGILITY;
 	}
 	
 	/**
 	* Creates new entity with unique ID and gives it a reference to EntityManager.
 	*/
-	public int newEntity(){
-		int id = getFreeGlobalId();
+	public int newEntity(int id){
+		//int id = getFreeGlobalId();
 		Entity e = new Entity();
 		e.id = id;
 		
@@ -100,16 +96,12 @@ public class EntityManager {
 			}
 		);
 	}
-		
-	/**
-	* Returns next free ID for the newEntity().
-	* 
-	* @return ID for new entity
-	*/
-	private int getFreeGlobalId() {
-		this.freeId++;
-		return freeId;
-	}
+			
+	/*@SuppressWarnings("unchecked")
+	public static Component getComponent(int entityId, Class component){
+		Component result = (Component) component.cast(components.get(getEntity(entityId)).get(component);		
+		return result;
+	}*/
 	
 	public void update(){
 		for(Entity e : entities){

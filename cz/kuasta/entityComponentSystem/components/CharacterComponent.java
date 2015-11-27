@@ -4,15 +4,16 @@ import java.util.HashMap;
 
 import cz.kuasta.entityComponentSystem.Component;
 import cz.kuasta.entityComponentSystem.EntityManager;
+import cz.kuasta.items.Armor;
 import cz.kuasta.items.Equipment;
-import cz.kuasta.items.Stats;
 import cz.kuasta.items.Equipment.Slot;
-import cz.kuasta.items.inventory.InventoryTemplate;
-import cz.kuasta.items.inventory.ListInventory;
+import cz.kuasta.items.Stats;
 import cz.kuasta.items.Weapon;
+import cz.kuasta.items.inventory.ListInventory;
 
 public class CharacterComponent extends Component{
 		
+	private int charId;
 	private String name;
 	private int hp;
 	private int level;
@@ -41,13 +42,15 @@ public class CharacterComponent extends Component{
 		equip.put(Slot.OFFHAND, null);
 		equip.put(Slot.RING, null);
 	}
-	public CharacterComponent(String name, int hp, int level, Stats baseStats, ListInventory inventory){
+	public CharacterComponent(int charId, String name, int level, Stats baseStats, ListInventory inventory){
+		this.charId = charId;
 		this.name = name;
-		this.hp = hp;
 		this.level = level;
+		this.stats = new Stats(0, 0, 0, 0, 0, 0, 0, 0, 0);
 		this.baseStats = baseStats;
 		this.inventory = inventory;
 		this.equip = new HashMap<Slot, Equipment>();
+		this.hp = getMaxHp();
 		
 		equip.put(Slot.HEAD, null);
 		equip.put(Slot.CHEST, null);
@@ -60,13 +63,15 @@ public class CharacterComponent extends Component{
 		equip.put(Slot.OFFHAND, null);
 		equip.put(Slot.RING, null);
 	}
-	public CharacterComponent(String name, int hp, int level, Stats baseStats, ListInventory inventory, HashMap<Slot, Equipment> equip){
+	public CharacterComponent(int charId, String name, int level, Stats baseStats, ListInventory inventory, HashMap<Slot, Equipment> equip){
+		this.charId = charId;
 		this.name = name;
-		this.hp = hp;
 		this.level = level;
+		this.stats = new Stats(0, 0, 0, 0, 0, 0, 0, 0, 0);
 		this.baseStats = baseStats;
 		this.inventory = inventory;
 		this.equip = equip;
+		this.hp = getMaxHp();
 	}
 	
 	public void statsChange(){
@@ -95,7 +100,7 @@ public class CharacterComponent extends Component{
 	public void equip(Equipment item){
 		Slot desiredSlot = null;
 		
-		if(item instanceof Equipment){
+		if(item instanceof Armor){
 			unEquip(item.getSlot());
 			equip.put(item.getSlot(), item);
 		}else if(item instanceof Weapon){
@@ -120,7 +125,6 @@ public class CharacterComponent extends Component{
 					break;*/
 			}
 		}
-		//inventory.removeItem(new cz.kuasta.items.crafting.Slot(item.id, 1));
 		statsChange();
 	}
 	private void unEquip(Slot slot){
@@ -135,7 +139,7 @@ public class CharacterComponent extends Component{
 		equip.forEach(
 			(k, v) -> {
 				if(v != null && v.getStats() != null){
-					v.getStats().add(result);
+					result.add(v.getStats());
 				}
 			}
 		);
@@ -180,6 +184,18 @@ public class CharacterComponent extends Component{
 	}
 	public Stats getStats() {
 		return stats;
+	}
+	public Stats getBaseStats() {
+		return baseStats;
+	}
+	public int getCharId() {
+		return charId;
+	}
+	public HashMap<Slot, Equipment> getEquip() {
+		return equip;
+	}
+	public void setBaseStats(Stats baseStats) {
+		this.baseStats = baseStats;
 	}
 	public ListInventory getInventory() {
 		return inventory;

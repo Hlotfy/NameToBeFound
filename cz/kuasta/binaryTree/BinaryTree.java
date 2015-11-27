@@ -1,6 +1,5 @@
 package cz.kuasta.binaryTree;
 
-import java.util.ArrayList;
 import java.util.Stack;
 
 import cz.kuasta.items.Item;
@@ -27,7 +26,7 @@ public class BinaryTree<T extends Item> {
 	 * @return true/false
 	*/
 	public boolean contains(int id){
-		int result = contains(root, id);
+		int result = containsSize(id);
 				
 		if(result>0)
 			return true;
@@ -40,7 +39,7 @@ public class BinaryTree<T extends Item> {
 	 * @return result - number of instances found
 	*/
 	public int instanceCounter(int id){
-		int result = contains(root, id);
+		int result = containsSize(id);
 		return result;
 	}
 	/**
@@ -74,6 +73,10 @@ public class BinaryTree<T extends Item> {
 		else
 			insert(root, node);
 	}
+	/***/
+	/*public void removeNode(int id){
+		remove(root, id);
+	}*/
 	/**
 	 * Inserts an instance into a Node<T>.
 	 * @param instance - instance for insertion
@@ -134,19 +137,19 @@ public class BinaryTree<T extends Item> {
 	}
 	
 	/***/
-	private int contains(Node<T> node, int id){
-		if (node == null) { 
-		    return 0; 
-		}else{
-			if(node.id == id){
-				return node.value.size(); 
-			}else{ 
-				if(node.id < id)
-					return contains(node.getLeft(), id); 
-				else
-					return contains(node.getRight(), id); 
-			} 
-		}	
+	private int containsSize(int id){
+		Node<T> currentNode = root;
+		
+		while(currentNode != null){
+			if(currentNode.id == id)
+				return currentNode.value.size();
+			else if(id < currentNode.id)
+				currentNode = currentNode.left;
+			else
+				currentNode = currentNode.right;
+		}
+		
+		return 0;
 	}
 	/***/
 	private Node<T> lookUp(Node<T> node, int id){
@@ -163,6 +166,30 @@ public class BinaryTree<T extends Item> {
 			} 
 		}	
 	}
+	
+	/*private Node<T> remove(Node<T> node, int id){
+        if( node==null )
+            return null;
+        if( id < node.id )
+            node.left = remove(node.left, id);
+        else if( id > node.id )
+        	node.right = remove(node.right, id);
+        else if( node.left != null && node.right != null ){
+            node.value = findMin(node.right).value;
+            node.right = remove( node.right, node.id );
+        }
+        else
+            node = ( node.left != null ) ? node.left : node.right;
+        return node;
+    }*/
+	@SuppressWarnings("unused")
+	private Node<T> findMin(Node<T> node){
+        if( node == null )
+            return null;
+        else if( node.left == null )
+            return node;
+        return findMin( node.left );
+    }
 	
 	/*public void inOrder(Node<T> node) {
 		if (node != null) {

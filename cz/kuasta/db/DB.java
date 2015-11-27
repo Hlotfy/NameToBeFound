@@ -1,21 +1,23 @@
 package cz.kuasta.db;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import cz.kuasta.items.Equipment;
-import cz.kuasta.items.Item;
-import cz.kuasta.items.Stats;
 import cz.kuasta.items.Equipment.Slot;
 import cz.kuasta.items.Item.Quality;
-import cz.kuasta.items.crafting.Machine;
-import cz.kuasta.items.crafting.Recipe;
-import cz.kuasta.items.crafting.Tool;
+import cz.kuasta.items.inventory.ListInventory;
 
 
 /**
@@ -25,19 +27,16 @@ import cz.kuasta.items.crafting.Tool;
  * @since 1.0
 */
 public class DB{
-	
-	private Connection connection;
+			
 	/** The access point to your database, for example with MySQL, you use the IP, user login and password.*/
 	private String conectionName;
 	/**Name of the database connector class.*/
 	private String connectorName;
-	
+		
 	/** Basic constructor that includes the JDBC Database.*/
 	public DB(){
 		this.conectionName = "jdbc:sqlite:data/ServerDB.db";
 		this.connectorName = "org.sqlite.JDBC";
-		
-		dbInit();
 	}
 	
 	/** Advanced DB constructor.<br>
@@ -45,17 +44,11 @@ public class DB{
 	public DB(String connectionName, String connectorName){
 		this.conectionName = connectionName;
 		this.connectorName = connectorName;
-		
-		dbInit();
-	}
-	
-	/***/
-	private void dbInit() {
-		
 	}
 	
 	//DB methods
 	public void executeSql(String sqlStmt){
+		Connection connection = null;
 		try{
 			Class.forName(connectorName);
 			connection = DriverManager.getConnection(conectionName);
@@ -71,8 +64,9 @@ public class DB{
 		        System.err.println(e);
 		    }
 		}
-	}
+	}	
 	public void executeSql(ArrayList<String> sqlStmt){
+		Connection connection = null;
 		try{
 			Class.forName(connectorName);
 			connection = DriverManager.getConnection(conectionName);
@@ -91,59 +85,79 @@ public class DB{
 		    }
 		}
 	}
+	public ArrayList<UserData> getUsers() throws SQLException{
+		ArrayList<UserData> data = new ArrayList<UserData>();
+		
+		try(
+				Connection connection = DriverManager.getConnection(conectionName);
+				PreparedStatement statement = connection.prepareStatement("select * from Users");
+				ResultSet rsSet = statement.executeQuery();
+		){
+			while(rsSet.next()){
+				UserData userData = new UserData();
+				userData.login = rsSet.getString("login");
+				userData.password = rsSet.getString("password");
+				userData.email = rsSet.getString("email");
+				userData.accesLevel = rsSet.getInt("accesLevel");
+				userData.characterId = rsSet.getInt("characterId");
+				
+				data.add(userData);
+			}
+		}
+		
+		return data;
+	}
 	/**
 	 * @param sqlStmt - string representing the statement for execution
 	 * @return resultSet - Instance of ResultSet which contains statement results.
 	 * @exception - 
 	*/
-	public ResultSet executeQuerry(String sqlStmt){
-		ResultSet resultSet = null;
+	/*public TableData executeQuerry(String sqlStmt){		
+		try(
+				Connection connection = DriverManager.getConnection(conectionName);
+				Statement statement = connection.prepareStatement(sqlStmt);
+				ResultSet rsSet = statement.executeQuery(sqlStmt);
+		){
+			if(sqlStmt.contains("from Users where")){
+				UserData userData = new UserData();
+				userData.login = rsSet.getString("login");
+				userData.password = rsSet.getString("password");
+				userData.email = rsSet.getString("email");
+				userData.accesLevel = rsSet.getInt("accesLevel");
+				userData.characterId = rsSet.getInt("characterId");
+				
+				return userData;
+			}else if(sqlStmt.contains("from Users")){
+				ArrayList<UserData>
+			}
+		}
 		
 		try {
-			Class.forName("org.sqlite.JDBC");
+			
 			connection = DriverManager.getConnection(conectionName);
 			Statement statement = connection.createStatement();
 			resultSet = statement.executeQuery(sqlStmt);
-		}catch(SQLException | ClassNotFoundException e){
+		}catch(SQLException){
 		    System.err.println(e.getMessage());
+		}finally{
+			try{
+		    	if(connection != null)
+		    		connection.close();
+		    }catch(SQLException e){
+		        System.err.println(e);
+		    }
 		}
 		
 		return resultSet;
-	}		
+	}*/	
 	
 	//added methods
-	/**
-	 * @param id databse table id
-	 * @return result slot instance
-	 * @throws SQLException 
-	*/
-	public Stats getStats(int id) throws SQLException{
-		Stats result = null;
-		
-		String sqlStmt = "select * from Stats where id=" + id;
-		ResultSet rsSet = executeQuerry(sqlStmt);
-		
-		result = new Stats();
-		
-		result.strength = rsSet.getInt("strength");
-		result.intelect = rsSet.getInt("intelect");
-		result.agility = rsSet.getInt("agility");
-		result.stamina = rsSet.getInt("stamina");
-		result.luck = rsSet.getInt("luck");
-		result.atkPower = rsSet.getInt("atkPower");
-		result.dodge = rsSet.getInt("dodge");
-		result.hit = rsSet.getInt("hit");
-		
-		
-		return result;
-	}
-
 	/**
 	 * @throws SQLException 
 	 * 
 	*/
-	@SuppressWarnings("unchecked")
-	public Item getItem(int id, int amount) throws SQLException{
+	
+	/*public Item getItem(int id, int amount) throws SQLException{
 		Item result = null;
 		String sqlStmt = null;
 		ResultSet rsSet = null;
@@ -244,41 +258,160 @@ public class DB{
 		}	
 		
 		return result;
-	}
+	}*/
 	
-	private boolean nameTaken(String name){		
-		ResultSet rsset = executeQuerry("select * from Users where name=" + name);
+	private boolean loginTaken(String name){
+		Connection connection = null;
+		ResultSet rsSet = null;
+		boolean result = false;
 		
-		if(rsset == null)
-			return true;
-		else
-			return false;
+		try{
+			connection = DriverManager.getConnection(conectionName);
+			Statement statement = connection.createStatement();
+			rsSet = statement.executeQuery("select * from Users where login='" + name + "'");
+				
+			if(rsSet.isBeforeFirst())
+				result = true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				connection.close();
+				rsSet.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return result;
 	}
-	public  void addUser(String login, String password, int accountLevel, String email){
-		String stmt = "";
-		boolean nameTaken = nameTaken(login);
+	private boolean emailTaken(String email){
+		Connection connection = null;
+		ResultSet rsSet = null;
+		boolean result = false;
 		
-		if(nameTaken = false){
-			Pattern loginPatern = Pattern.compile("[a-zA-Z0-9]{6,20}");
+		try{
+			connection = DriverManager.getConnection(conectionName);
+			Statement statement = connection.createStatement();
+			rsSet = statement.executeQuery("select * from Users where email='" + email + "'");
+		
+			if(rsSet.isBeforeFirst())
+				result = true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				connection.close();
+				rsSet.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return result;
+	}
+	public UserData getUserData(String login){
+		Connection connection = null;
+		ResultSet rsSet = null;
+		UserData result = null;
+		
+		try{
+				connection = DriverManager.getConnection(conectionName);
+				PreparedStatement statement = connection.prepareStatement("select * from Users where login=(?)");
+				statement.setString(1, login);
+				rsSet = statement.executeQuery();
+				
+				if(rsSet != null){
+					result = new UserData();
+					result.login = rsSet.getString("login");
+					result.password = rsSet.getString("password");
+					result.email = rsSet.getString("email");
+					result.accesLevel = rsSet.getInt("accesLevel");
+					result.characterId = rsSet.getInt("characterId");
+				}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				connection.close();
+				rsSet.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return result;
+	}
+	@SuppressWarnings("unchecked")
+	public CharacterData getCharacterData(int characterId){
+		CharacterData result = null;
+		Connection connection = null;
+		ResultSet rsSet = null;
+		
+		try{
+				connection = DriverManager.getConnection(conectionName);
+				PreparedStatement statement = connection.prepareStatement("select * from Characters where characterId=(?)");
+				statement.setInt(1, characterId);
+				rsSet = statement.executeQuery();
+				
+				if(rsSet != null){
+					result = new CharacterData();
+					result.charId = characterId;
+					result.title = rsSet.getString("title");
+					result.name = rsSet.getString("name");
+					result.level = rsSet.getInt("level");
+					result.stats = rsSet.getObject("stats", cz.kuasta.items.Stats.class);
+					result.inventory = rsSet.getObject("inventory", ListInventory.class);
+					result.equip = (HashMap<Slot, Equipment>) rsSet.getObject("equip", HashMap.class);
+				}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				connection.close();
+				rsSet.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return result;
+	}
+	/**Need to be remade or used whatsoever
+	 * @throws SQLException */
+	public int addUser(String login, String password, String email, int accountLevel){
+		//int result = (Integer) null;
+		String stmt = "";
+		boolean loginTaken = loginTaken(login);
+				
+		if(loginTaken == false){
+			Pattern loginPatern = Pattern.compile("[a-zA-Z0-9]{4,20}");
 			Matcher loginMatcher = loginPatern.matcher(login);
 			
 			Pattern passwordPatern = Pattern.compile("[a-zA-Z0-9]{6,30}");
 			Matcher passwordMatcher = passwordPatern.matcher(password);
 			
-			Pattern emailPatern = Pattern.compile("[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,3}");
+			Pattern emailPatern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+					+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 			Matcher emailMatcher = emailPatern.matcher(email);
 			
-			if (emailMatcher.find() & loginMatcher.find() & passwordMatcher.find() & nameTaken == false) {
-				stmt = "insert into Users values(" + login + "', '" + password + "', '" + email + "', " + accountLevel + ")";
-				executeSql(stmt);
-			}else{
-				
-			}
 			
-			
-		}
+			if(emailTaken(email) == false){
+				if (emailMatcher.find() == true && loginMatcher.find() == true  && passwordMatcher.find() == true && loginTaken == false) {
+					stmt = "insert into Users values('" + login + "','" + password + "','" + email + "'," + accountLevel + ",0)";
+					System.out.println(stmt);
+					executeSql(stmt);
+					return 1; //everything ok, email or name not taken
+				}else
+					return 2; //pattern doesnt match
+			}else
+				return 3; // email taken
+		}else
+			return 0; //name taken
+		//return result;
 	}
 	public void addItem(){}
+	
 
 	public static Quality valueToQuality(int i){
 		Quality result = null;
@@ -355,5 +488,55 @@ public class DB{
 		}
 		
 		return result;
+	}
+
+	/***/
+	public void dbEntriesToTxt(){
+		PrintWriter pw;
+		try {
+			pw = new PrintWriter("data/savedEntries.txt");
+			pw.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter("data/savedEntries.txt", true))){
+			
+			ArrayList<UserData> userData = getUsers(); 
+			
+			bw.write("Users");
+			bw.newLine();
+			bw.write("---------------------------------------------------------------------------------------------------------");
+			bw.newLine();
+
+			for(UserData ud : userData){
+				String result = "| login = " + ud.login + 
+						" password = " + ud.password + 
+						" email = " + ud.email + 
+						" acces Level = " + ud.accesLevel +
+						" charId = " + ud.characterId;
+				bw.write(result);
+				bw.newLine();
+			}
+				
+			bw.write("---------------------------------------------------------------------------------------------------------");
+			bw.flush();
+		}catch (Exception e){
+			System.err.println("Error working with text file");
+		}
+	
+		/*try {
+			pw = new PrintWriter("data/serverLog.txt");
+			pw.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		try (BufferedWriter bwr = new BufferedWriter(new FileWriter("data/serverLog.txt", true))){
+			bwr.write(NameToBeFoundServer.serverLog);
+			bwr.flush();
+		}catch (Exception e){
+			System.err.println("Error working with text file");
+		}*/
 	}
 }
