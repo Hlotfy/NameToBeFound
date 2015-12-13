@@ -182,14 +182,49 @@ public class BinaryTree<T extends Item> {
             node = ( node.left != null ) ? node.left : node.right;
         return node;
     }*/
-	@SuppressWarnings("unused")
-	private Node<T> findMin(Node<T> node){
-        if( node == null )
-            return null;
-        else if( node.left == null )
-            return node;
-        return findMin( node.left );
-    }
+	
+	public boolean remove(int id) {
+		Node<T> found=null;
+		Node<T> reorder=null;
+		boolean success=false;
+		if(!contains(id)) {
+			success=false;
+
+		}else if(root==null)
+			success=false;
+		found=lookUp(root, id);
+		if(found==null) {
+			success=false;
+		}else if(root.id==found.id&&found.isLeaf()) {
+			root=null;
+			success=true;
+		}else if(found.isLeaf()) {
+			if(found.getParent().getLeft()==found) {
+				reorder=found.getParent();
+				found=null;
+				success=true;
+			}else if(found.getParent().getRight()==found) {
+				reorder=found.getParent();
+				success=true;
+			}
+		}else {
+			reorder=found.minValue();
+			new Node<T>(reorder.id,reorder.value,found.getParent(),found.getRight(),found.getLeft());
+			found.clear();
+			reorder.clear();
+			success=true;
+		}
+		return success;
+	}
+
+//	@SuppressWarnings("unused")
+//	private Node<T> findMin(Node<T> node){
+//        if( node == null )
+//            return null;
+//        else if( node.left == null )
+//            return node;
+//        return findMin( node.left );
+//    }
 	
 	/*public void inOrder(Node<T> node) {
 		if (node != null) {
